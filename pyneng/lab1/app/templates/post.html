@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-8">
+        <div>
+            <h1 class="pt-4">{{ post.title }}</h1>
+            <div class="pb-2">
+                {{ post.author }}, {{ post.date.strftime('%d.%m.%Y') }}
+            </div>
+            <div class="text-center pb-4">
+                <img class="card-img-top rounded" style="max-width: 88%;" src="{{ url_for('static', filename='images/' + post.image_id) }}" alt="Card image cap">
+            </div>
+            <p style="text-align: justify;">
+                {{ post.text }}
+            </p>
+        </div>
+        <div class="mt-3">
+            <form class="border">
+                <div class="py-2 px-4 border-bottom bg-light">Оставьте комментарий</div>
+                <div class="container pt-3">
+                    <textarea class="form-control" rows="3"></textarea>
+                    <div class="py-3">
+                        <button class="btn btn-primary">Отправить</button>
+                    </div>
+                </div>   
+            </form>
+            {% for comment in post.comments %}  
+            <div class="d-flex pt-4">
+                <div class="flex-shrink-0">
+                    <img class="rounded-circle" style="width: 60px; height: 60px;" src="{{ url_for('static', filename='images/user_photo.png') }}">
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h5>{{ comment.author }}</h5>
+                    <p>{{ comment.text }}</p>
+                    {% for reply in comment['replies'] %}
+                    <div class="d-flex mt-4">
+                        <div class="flex-shrink-0">
+                            <img class="rounded-circle" style="width: 60px; height: 60px;"src="{{ url_for('static', filename='images/user_photo.png') }}">
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5>{{ reply.author }}</h5>
+                            <p>{{ reply.text }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-2"></div>
+</div>
+{% endblock %}
