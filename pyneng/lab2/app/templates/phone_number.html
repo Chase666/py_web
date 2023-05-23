@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+    <form method="POST">
+        <div class="py-2">
+            <label for="phoneNumField" class="form-label">Введите номер телефона</label>
+            <div class="input-group has-validation">
+                <input type="text"
+                    class="form-control {% if invalid %}is-invalid{% endif %} {% if not invalid and request.method == 'POST' %}is-valid{% endif %}"
+                    name="phone_number" id="phoneNumField"
+                    aria-describedby="checkPhoneNumField" placeholder="8-ХХХ-ХХХ-ХХ-ХХ"
+                    value="{{ phone_number or '' }}">
+                {% if invalid %}
+                <div id="checkPhoneNumField" class="invalid-feedback">
+                    {{ error_msg }}
+                </div>
+                {% endif %}
+                {% if not invalid and request.method == 'POST' %}
+                <div class="valid-feedback">
+                    Корректный ввод
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <button class="btn btn-primary mb-2" type="submit">Проверить</button>
+    </form>
+</div>
+{% endblock %}
