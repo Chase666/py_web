@@ -64,7 +64,9 @@ def phone_number():
             if num.isdigit():
                 number_length += 1
                 nums_phone_number += str(num)
-        if len(nums_phone_number) < 10:
+        if error_msg==errors[1]:
+            return render_template('phone_number.html', phone_number=phone_number, invalid=invalid, error_msg=error_msg)
+        elif len(nums_phone_number) < 10:
             return render_template('phone_number.html', phone_number=phone_number, invalid=True, error_msg=errors[0])
         if invalid == False and phone_number[0] == '+' and phone_number[1] == '7' and len(nums_phone_number) == 11:
             phone_number = normalize_number('+7', nums_phone_number)
