@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container">
+    <h1>Список книг</h1>
+    <div class="row">
+    {% for book in books() %}
+      <div class="col-md-4">
+        <div class="card mb-4 box-shadow">
+          <div class="card-body">
+            <h5 class="card-title">Название книги: {{ book.name }}</h5>
+            <p class="card-text">Жанр: хоррор</p>
+            <p class="card-text">Год: {{ book.year }}</p>
+            <p class="card-text">Средняя оценка: 4.5</p>
+            <p class="card-text">Количество рецензий: 10</p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+{% endblock %}
