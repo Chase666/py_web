@@ -3,7 +3,7 @@ import sqlalchemy as sa
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
 from flask import url_for
-from app import db
+from app import db, app
 
 class Category(db.Model):
     __tablename__ = 'categories'
@@ -24,6 +24,7 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(100), nullable=False)
     surname = db.Column(db.String(100))
     login = db.Column(db.String(100), unique=True, nullable=False)
+    role_id = db.Column(db.Integer)
     phash = db.Column(db.String(200), nullable=False)
 
 
@@ -34,8 +35,22 @@ class User(db.Model, UserMixin):
         return check_password_hash(self.phash, password)
 
     @property
+    def is_admin(self):
+        return self.role_id == app.config['ADMINROLE_ID']
+
+    @property
+    def is_moder(self):
+        return self.role_id == app.config['MODERROLE_ID']
+
+    @property
+    def is_user(self):
+        return self.role_id == app.config['USERROLE_ID']
+
+
+
+    @property
     def full_name(self):
-        return ' '.join([self.lastname, self.name, self.surname or ''])
+        return ' '.join([self.surname, self.name, self.lastname or ''])
 
     def __repr__(self):
         return '<User %r>' % self.login
@@ -54,7 +69,25 @@ class Book(db.Model):
     def __repr__(self):
         return '<Book %r>' % self.name
 
-    
+    @property
+    def get_genres(self):
+        return Genre.query.join(BookGenre).filter(BookGenre.book_id == self.id).all()
+
+class Genre(db.Model):
+    __tablename__ = 'genres'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+
+    def __repr__(self):
+        return self.name
+
+class BookGenre(db.Model):
+    __tablename__ = 'books_genres'
+
+    id = db.Column(db.Integer, primary_key=True)
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'))
+    genre_id = db.Column(db.Integer, db.ForeignKey('genres.id'))
 
 class Image(db.Model):
     __tablename__ = 'images'

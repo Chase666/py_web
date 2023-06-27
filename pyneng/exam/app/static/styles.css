@@ -6,6 +6,10 @@
     max-width: 45px;
 }
 
+.username {
+    color:aliceblue;
+}
+
 .background-preview {
     border: 3px dashed grey;
     flex-grow: 1;

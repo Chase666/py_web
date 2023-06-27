@@ -25,8 +25,7 @@ def login():
         password = request.form.get('password')
         if login and password:
             user = db.session.execute(db.select(User).filter_by(login=login)).scalar()
-            ##if user and user.check_password(password):
-            if user and password=="qwerty": ##временно
+            if user and user.check_password(password):
                 login_user(user)
                 flash('Вы успешно аутентифицированы.', 'success')
                 next = request.args.get('next')

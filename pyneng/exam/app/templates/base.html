@@ -10,7 +10,13 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
-    <title>Образовательный портал | Московский Политех</title>
+    <title>Электронная библиотека</title>
+
+    <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -24,12 +30,15 @@
                 </div>
                 {% if current_user.is_authenticated %}
                     <div class="dropdown d-flex" style="width: 200px;">
-                        <div class="profile ms-auto" title="{{ current_user.full_name }}" id="dropdownMenuButton" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            <img class="img-fluid rounded-circle cursor-pointer"
-                                src="{{ url_for('static', filename='images/default-profile-picture-300x300.jpeg') }}" alt="profile-pic">
-                        </div>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <div class="username">{{ current_user.full_name }}</div>
+                        <div class="profile ms-auto" title="" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <img class="img-fluid rounded-circle cursor-pointer"
+                        src="{{ url_for('static', filename='images/default-profile-picture-300x300.jpeg') }}" alt="profile-pic">
+                    </div>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <div class="px-3">{{ current_user.name }}</div>
                             <a class="dropdown-item" href="#">Профиль</a>
                             <a class="dropdown-item" href="#">Мои курсы</a>
                             <div class="dropdown-divider"></div>

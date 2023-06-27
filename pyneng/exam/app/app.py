@@ -21,9 +21,10 @@ db = SQLAlchemy(app, metadata=metadata)
 migrate = Migrate(app, db)
 
 from auth import bp as auth_bp, init_login_manager
-
+from books import bp as book_bp
 
 app.register_blueprint(auth_bp)
+app.register_blueprint(book_bp)
 
 
 init_login_manager(app)
@@ -32,7 +33,7 @@ from models import Book, Image
 
 @app.route('/')
 def index():
-    books = db.session.execute(db.select(Book)).scalars
+    books = Book.query.order_by(Book.year.desc()).all()
     return render_template(
         'index.html',
         books=books
