@@ -1,3 +1,4 @@
+{% from 'pagination.html' import pagination %}
 {% extends 'base.html' %}
 
 {% block content %}
@@ -13,8 +14,8 @@
               {{genre.name}}
               {%endfor%}</p>
             <p class="card-text">Год: {{ book.year }}</p>
-            <p class="card-text">Средняя оценка: 4.5</p>
-            <p class="card-text">Количество рецензий: 10</p>
+            <p class="card-text">Средняя оценка: {{ book.get_midscore }}</p>
+            <p class="card-text">Количество рецензий: {{ book.count_reviews }}</p>
             <div class="btn-group" role="group"></div>
             <a type="button" class="btn btn-primary" href="{{ url_for('book.show', book_id = book.id) }}">Просмотр</a>
             {% if current_user.is_admin %}
@@ -23,15 +24,16 @@
                         data-url="{{ url_for('book.delete', book_id=book.id) }}" data-name="{{ book.name }}">
                         Удалить </button>
             {% elif current_user.is_moder %}
-              <a type="button" class="btn btn-primary">Редактировать</a>
+              <a type="button" class="btn btn-primary" href="{{ url_for('book.edit', book_id = book.id) }}">Редактировать</a>
             {% endif %}
           </div>
         </div>
       </div>
     {% endfor %}
-
+    {{pagination(page, page_count, request.endpoint)}}
+    {% if current_user.is_admin %}
     <a type="button" class="btn btn-primary" href="{{ url_for('book.new') }}">Новая</a>
-
+    {% endif %}
     </div>
 
 

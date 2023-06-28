@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">Статус</th>
+        <th scope="col">Книга</th>
+        <th scope="col">Оценка</th>
+        <th scope="col">Текст</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for review in reviews %}
+      <tr>
+        <th scope="row">{{review.get_status_name}}</th>
+        <td>{{review.get_book_name}}</td>
+        <td>{{review.score}}</td>
+        <td>{{review.rtext | safe}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

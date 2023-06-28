@@ -2,12 +2,10 @@
 {% block content %}
     <div class="container">
         <div class="row justify-content-center mt-4">
-            <div class="col-12 my-4">
-            </div>
-            <div class="col-12 col-lg-4">  
+            <div class="col-4">  
                 <img class="card-img-top" src="{{ url_for('static', filename='images/book_cover.png') }}"  alt="book cover">
             </div>
-            <div class="col-12 col-lg-8">
+            <div class="col-4">
                 <div class="d-flex flex-column">
                     <h3>{{ book.name }}</h3>
 
@@ -27,8 +25,22 @@
                     <p><b>Oписание:</b> {{ book.description | safe }}</p>
                 </div>
             </div>
-            <div class="col-12">
+            <div class="col-4">
+                {%- for review in reviews %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                      {{review.get_name_user}}
+                    </div>
+                    <div class="card-body">
+                      <h5 class="card-title">Оценка: {{review.score}} &#9734;</h5>
+                      <p class="card-text">{{review.rtext | safe}}</p>
+                    </div>
+                  </div>
+                {%- endfor %}
             </div>
         </div>
+        {% if create_review %}
+        <a type="button" class="btn btn-primary" href="{{ url_for('review.create_review', book_id = book.id) }}">Написать рецензию</a>
+        {% endif %}
     </div>
 {% endblock %}

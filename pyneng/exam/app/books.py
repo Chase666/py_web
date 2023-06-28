@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
-from flask_login import LoginManager, login_user, logout_user, login_required
-from models import Genre, Book, BookGenre
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from models import Genre, Book, BookGenre, Review
 from app import db
 import bleach
 import markdown
+from auth import check_rights
 
 bp = Blueprint('book', __name__, url_prefix='/book')
 
@@ -24,11 +25,26 @@ def get_book_params():
 
 # Для просмотра
 @bp.route('/<int:book_id>/show')
+@check_rights("show")
 def show(book_id):
     # Загрузка книги
     book = Book.query.get(book_id)
     book.description = markdown.markdown(book.description)
-    return render_template('books/show.html', book = book)
+
+    # Рецензии
+    book_review = Review.query.filter(Review.book_id == book_id, Review.status_id == 2).all()
+    for review in book_review:
+        review.rtext = markdown.markdown(review.rtext)
+    # book_review = Review.query.filter(Review.book_id == book_id).all()
+    book_review_user = Review.query.filter(Review.book_id == book_id, Review.user_id == current_user.id).all()
+
+    if book_review_user:
+        create_review = False
+    else:
+        create_review = True
+
+
+    return render_template('books/show.html', book = book, reviews = book_review, create_review = create_review)
 
 # Создание жанров
 def create_genre(book_id):
@@ -43,6 +59,8 @@ def create_genre(book_id):
 
 # Для создания новой книги
 @bp.route('/new', methods=['GET', 'POST'])
+@login_required
+@check_rights("new")
 def new():
     # Получение всех жанров
     genres = Genre.query.all()
@@ -83,6 +101,8 @@ def delete_all_genre(book_id):
 
 # Для изменения книги
 @bp.route('/<int:book_id>/edit', methods=['GET', 'POST'])
+@login_required
+@check_rights("edit")
 def edit(book_id):
     # Загрузка книги
     book = Book.query.get(book_id)
@@ -138,6 +158,8 @@ def edit(book_id):
 
 # Для удаления книги
 @bp.route('/<int:book_id>/delete', methods=['POST'])
+@login_required
+@check_rights("delete")
 def delete(book_id):
     try:
         book = Book.query.get(book_id)
@@ -148,3 +170,4 @@ def delete(book_id):
         db.session.rollback()
         flash("При удалении возникла ошибка.", "danger")
     return redirect(url_for('index'))
+

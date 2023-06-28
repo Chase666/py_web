@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <form method="post">
+        <div class="form-group my-5">
+            <p>Оценка:</p>
+            <select class="form-select" aria-label="Default select example" name="score">
+                <option value="5" {%if score == 5%}selected{%endif%}>Отлично</option>
+                <option value="4" {%if score == 4%}selected{%endif%}>Хорошо</option>
+                <option value="3" {%if score == 3%}selected{%endif%}>Удовлетворительно</option>
+                <option value="2" {%if score == 2%}selected{%endif%}>Неудовлетворительно</option>
+                <option value="1" {%if score == 1%}selected{%endif%}>Ужасно</option>
+              </select>
+        </div>
+            <div class="form-group">
+                <label for="rtext">Рецензия</label>
+                <textarea id="rtext" name="rtext"></textarea>
+                    <script>
+                        const easymde = new EasyMDE({
+                        element: document.getElementById('rtext'),
+                        });
+                    </script>
+        </div>
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+</div>
+{% endblock %}

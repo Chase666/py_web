@@ -1,7 +1,8 @@
-from flask import Flask, render_template, abort, send_from_directory
+from flask import Flask, render_template, abort, send_from_directory, request
 from sqlalchemy import MetaData
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+import math
 
 app = Flask(__name__)
 application = app
@@ -22,9 +23,11 @@ migrate = Migrate(app, db)
 
 from auth import bp as auth_bp, init_login_manager
 from books import bp as book_bp
+from review import bp as review_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(book_bp)
+app.register_blueprint(review_bp)
 
 
 init_login_manager(app)
@@ -33,10 +36,13 @@ from models import Book, Image
 
 @app.route('/')
 def index():
-    books = Book.query.order_by(Book.year.desc()).all()
+    page = request.args.get('page', 1, type=int)
+    book_count = Book.query.count()
+    page_count = math.ceil(book_count / app.config['BOOKS_PER_PAGE'])
+    books = Book.query.order_by(Book.year.desc()).limit(app.config['BOOKS_PER_PAGE']).offset(app.config['BOOKS_PER_PAGE'] * (page - 1)).all()
     return render_template(
         'index.html',
-        books=books
+        books=books, page=page, page_count=page_count
     )
 
 @app.route('/images/<image_id>')

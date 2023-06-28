@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% from 'pagination.html' import pagination %}
+{% block content %}
+<table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">Книга</th>
+        <th scope="col">Пользователь</th>
+        <th scope="col">Дата добавления</th>
+        <th scope="col"> </th>
+      </tr>
+    </thead>
+    <tbody>
+        {%- for review in reviews %}
+      <tr>
+        <th scope="row">{{review.get_book_name}}</th>
+        <td>{{review.get_name_user}}</td>
+        <td>{{review.created_at}}</td>
+        <td><a type="button" class="btn btn-primary" href="{{ url_for('review.show_review', review_id = review.id) }}">Рассмотреть</a></td>
+      </tr>
+      {%- endfor %}
+    </tbody>
+  </table>
+  {{pagination(page, page_count, request.endpoint)}}
+{% endblock %}

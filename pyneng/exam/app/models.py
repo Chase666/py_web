@@ -4,17 +4,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
 from flask import url_for
 from app import db, app
-
-class Category(db.Model):
-    __tablename__ = 'categories'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    parent_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
-
-    def __repr__(self):
-        return '<Category %r>' % self.name
-
+from users_policy import UsersPolicy
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -46,11 +36,16 @@ class User(db.Model, UserMixin):
     def is_user(self):
         return self.role_id == app.config['USERROLE_ID']
 
-
-
     @property
     def full_name(self):
         return ' '.join([self.surname, self.name, self.lastname or ''])
+
+    def can(self, action, record=None):
+        users_policy = UsersPolicy(record)
+        method = getattr(users_policy, action, None)
+        if method:
+            return method()
+        return False
 
     def __repr__(self):
         return '<User %r>' % self.login
@@ -72,6 +67,22 @@ class Book(db.Model):
     @property
     def get_genres(self):
         return Genre.query.join(BookGenre).filter(BookGenre.book_id == self.id).all()
+        
+    @property
+    def count_reviews(self):
+        return Review.query.filter(Review.book_id == self.id, Review.status_id == 2).count()
+
+    @property
+    def get_midscore(self):
+        count = Review.query.filter(Review.book_id == self.id, Review.status_id == 2).count()
+        reviews = Review.query.filter(Review.book_id == self.id, Review.status_id == 2).all()
+        if count == 0:
+            return 0
+        midscore = 0
+        for review in reviews:
+            midscore += review.score
+        return midscore / count
+
 
 class Genre(db.Model):
     __tablename__ = 'genres'
@@ -113,3 +124,35 @@ class Image(db.Model):
     @property
     def url(self):
         return url_for('image', image_id=self.id)
+
+class ReviewStatus(db.Model):
+    __tablename__ = 'rstatuses'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+
+class Review(db.Model):
+    __tablename__ = 'reviews'
+
+    id = db.Column(db.Integer, primary_key=True)
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    status_id = db.Column(db.Integer, db.ForeignKey('rstatuses.id'))
+    score = db.Column(db.Integer, nullable=False)
+    rtext = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, server_default=sa.sql.func.now())
+
+    def __repr__(self):
+        return '<Review %r>' % self.id
+
+    @property
+    def get_name_user(self):
+        return User.query.get(self.user_id).full_name
+    
+    @property
+    def get_book_name(self):
+        return Book.query.get(self.book_id).name
+
+    @property
+    def get_status_name(self):
+        return ReviewStatus.query.get(self.status_id).name

@@ -38,9 +38,10 @@
                     </div>
 
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <div class="px-3">{{ current_user.name }}</div>
-                            <a class="dropdown-item" href="#">Профиль</a>
-                            <a class="dropdown-item" href="#">Мои курсы</a>
+                            {% if current_user.is_moder %}
+                            <a class="dropdown-item" href="{{ url_for('review.show_all_review') }}">Модерация рецензий</a>
+                            {% endif %}
+                            <a class="dropdown-item" href="{{ url_for('review.show_user_review') }}">Мои рецензий</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Выйти</a>
                         </div>
@@ -69,7 +70,7 @@
     </main>
 
     <footer class="bg-dark text-white d-flex align-items-center justify-content-center py-3">
-        &copy; Московский политехнический университет
+        &copy; Войтович В.А. 211-351
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
