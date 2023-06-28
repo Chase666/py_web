@@ -25,7 +25,6 @@ def get_book_params():
 
 # Для просмотра
 @bp.route('/<int:book_id>/show')
-@check_rights("show")
 def show(book_id):
     # Загрузка книги
     book = Book.query.get(book_id)
@@ -36,7 +35,10 @@ def show(book_id):
     for review in book_review:
         review.rtext = markdown.markdown(review.rtext)
     # book_review = Review.query.filter(Review.book_id == book_id).all()
-    book_review_user = Review.query.filter(Review.book_id == book_id, Review.user_id == current_user.id).all()
+    if current_user.is_authenticated:
+        book_review_user = Review.query.filter(Review.book_id == book_id, Review.user_id == current_user.id).all()
+    else:
+        book_review_user = True
 
     if book_review_user:
         create_review = False
