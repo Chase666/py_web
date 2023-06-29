@@ -41,7 +41,7 @@
                             {% if current_user.is_moder %}
                             <a class="dropdown-item" href="{{ url_for('review.show_all_review') }}">Модерация рецензий</a>
                             {% endif %}
-                            <a class="dropdown-item" href="{{ url_for('review.show_user_review') }}">Мои рецензий</a>
+                            <a class="dropdown-item" href="{{ url_for('review.show_user_review') }}">Мои рецензии</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Выйти</a>
                         </div>

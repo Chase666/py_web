@@ -167,7 +167,7 @@ def delete(book_id):
         book = Book.query.get(book_id)
         db.session.delete(book)
         db.session.commit()
-        flash("Книга удалена изменена.", "success")
+        flash("Книга удалена.", "success")
     except:
         db.session.rollback()
         flash("При удалении возникла ошибка.", "danger")
